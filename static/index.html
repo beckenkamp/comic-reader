@@ -1,0 +1,58 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Comic Reader</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
+</head>
+
+<body ng-app="myApp">
+
+    <div class="container-fluid">
+
+        <div class="header">
+            <nav>
+                <ul class="nav nav-pills pull-right">
+                    <li role="presentation" class="active"><a href="#">Home</a></li>
+                    <li role="presentation"><a href="#">Upload</a></li>
+                    <li role="presentation"><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+            <h3 class="text-muted">Comic Reader</h3>
+        </div>
+
+        <div ng-controller="uploadCtrl" class="form-inline">
+            <div class="form-group">
+                <label>Comic</label>
+                <select class="form-control" ng-model="comic_id" ng-options="comic.id as comic.title for comic in comics" ng-change="getChapters(comic_id)">
+                    <option value="">Select a Comic</option>
+                </select>
+            </div>
+
+            <div class="form-group" ng-show="chapters.length">
+                <label>Chapter</label>
+                <select class="form-control" ng-model="chapter_id" ng-options="chapter.id as chapter.title for chapter in chapters">
+                    <option value="">Select a Comic</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <input class="form-control" type="file" file-model="file"/>
+            </div>
+            
+            <button class="btn btn-default" ng-click="uploadFile()">Upload me</button>
+            
+            <div ng-show="msg">
+                {{ msg }}
+                <!--<img ng-src="/uploads/{{ msg }}" />-->
+            </div>
+        </div>
+
+    </div>
+
+<script type="text/javascript" src="js/angular.min.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+
+</body>
+</html>

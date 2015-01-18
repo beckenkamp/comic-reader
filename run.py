@@ -6,7 +6,7 @@ from flask.ext.restless import APIManager
 from werkzeug import secure_filename
 import os
 
-UPLOAD_FOLDER = '/Users/mvbeck/projetos/comic-reader/uploads'
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),'uploads')
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
@@ -53,11 +53,18 @@ def allowed_file(filename):
 
 @app.route('/upload',methods=['POST'])
 def upload():
+    chapter_id = request.form['chapter_id']
+    comic_id = request.form['comic_id']
     filepage = request.files['file']
     if filepage and allowed_file(filepage.filename):
         file = secure_filename(filepage.filename)
-        filepage.save(os.path.join(app.config['UPLOAD_FOLDER'], file))
-        return file
+        directory = os.path.join(app.config['UPLOAD_FOLDER'], comic_id.zfill(3))
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        if not os.path.exists(os.path.join(directory, chapter_id.zfill(3))):
+            os.makedirs(os.path.join(directory, chapter_id.zfill(3)))
+        filepage.save(os.path.join(directory, chapter_id.zfill(3), file))
+        return os.path.join(comic_id.zfill(3), chapter_id.zfill(3), file)
     return 'error'
 
 
