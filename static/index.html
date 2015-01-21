@@ -8,43 +8,109 @@
 
 <body ng-app="myApp">
 
-    <div class="container-fluid">
+    <div class="container-fluid" ng-controller="mainCtrl">
 
         <div class="header">
             <nav>
                 <ul class="nav nav-pills pull-right">
-                    <li role="presentation" class="active"><a href="#">Home</a></li>
-                    <li role="presentation"><a href="#">Upload</a></li>
-                    <li role="presentation"><a href="#">Contact</a></li>
+                    <li role="presentation" ng-class="{active: home, inactive: !home}" ng-click="show('home')"><a href="#">Home</a></li>
+                    <li role="presentation" ng-class="{active: newauthor, inactive: !newauthor}"><a href="#" ng-click="show('author')">New Author</a></li>
+                    <li role="presentation" ng-class="{active: newcomic, inactive: !newcomic}"><a href="#" ng-click="show('comic')">New Comic</a></li>
+                    <li role="presentation" ng-class="{active: newchapter, inactive: !newchapter}"><a href="#" ng-click="show('chapter')">New Chapter</a></li>
+                    <li role="presentation" ng-class="{active: newpage, inactive: !newpage}"><a href="#" ng-click="show('page')">New Page</a></li>
                 </ul>
             </nav>
             <h3 class="text-muted">Comic Reader</h3>
         </div>
 
-        <div ng-controller="uploadCtrl" class="form-inline">
-            <div class="form-group">
-                <label>Comic</label>
-                <select class="form-control" ng-model="comic_id" ng-options="comic.id as comic.title for comic in comics" ng-change="getChapters(comic_id)">
-                    <option value="">Select a Comic</option>
-                </select>
+
+        <div ng-controller="comicCtrl" class="form-inline">
+
+            <div ng-show="home">
+                <ul>
+                    <li ng-repeat="author in authors">{{ author.name }}
+                        <ul>
+                            <li ng-repeat="comic in author.comics">{{ comic.title }}
+                                <ul>
+                                    <li ng-repeat="chapter in comic.chapters">{{ chapter.title }}
+                                        <ul>
+                                            <li ng-repeat="page in chapter.pages">{{ page.id }}</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
 
-            <div class="form-group" ng-show="chapters.length">
-                <label>Chapter</label>
-                <select class="form-control" ng-model="chapter_id" ng-options="chapter.id as chapter.title for chapter in chapters">
-                    <option value="">Select a Comic</option>
-                </select>
+            <div ng-show="newauthor">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" ng-model="author_name" />
+                </div>
+
+                <button class="btn btn-default" ng-click="addAuthor()">Add</button>
             </div>
-            
-            <div class="form-group">
-                <input class="form-control" type="file" file-model="file"/>
+        
+            <div ng-show="newcomic">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" ng-model="comic_title" />
+                </div>
+
+                <div class="form-group">
+                    <label>Author</label>
+                    <select class="form-control" ng-model="author_id" ng-options="author.id as author.name for author in authors">
+                        <option value="">Select an Author</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-default" ng-click="addComic()">Add</button>
             </div>
-            
-            <button class="btn btn-default" ng-click="uploadFile()">Upload me</button>
-            
-            <div ng-show="msg">
-                {{ msg }}
-                <!--<img ng-src="/uploads/{{ msg }}" />-->
+
+            <div ng-show="newchapter">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" ng-model="chapter_title" />
+                </div>
+
+                <div class="form-group">
+                    <label>Comic</label>
+                    <select class="form-control" ng-model="comic_id" ng-options="comic.id as comic.title for comic in comics">
+                        <option value="">Select an Comic</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-default" ng-click="addChapter()">Add</button>
+            </div>
+            {{ msg }}
+        
+            <div ng-show="newpage">
+                <div class="form-group">
+                    <label>Comic</label>
+                    <select class="form-control" ng-model="comic_id" ng-options="comic.id as comic.title for comic in comics" ng-change="getChapters(comic_id)">
+                        <option value="">Select a Comic</option>
+                    </select>
+                </div>
+
+                <div class="form-group" ng-show="chapters.length">
+                    <label>Chapter</label>
+                    <select class="form-control" ng-model="chapter_id" ng-options="chapter.id as chapter.title for chapter in chapters">
+                        <option value="">Select a Comic</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <input class="form-control" type="file" file-model="file"/>
+                </div>
+                
+                <button class="btn btn-default" ng-click="uploadFile()">Upload me</button>
+                
+                <div ng-show="msg">
+                    {{ msg }}
+                    <!--<img ng-src="/uploads/{{ msg }}" />-->
+                </div>
             </div>
         </div>
 

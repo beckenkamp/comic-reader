@@ -41,12 +41,67 @@ myApp.service('fileUpload', ['$http', function ($http) {
     }
 }]);
 
-myApp.controller('uploadCtrl', ['$scope', '$http', 'fileUpload', function($scope, $http, fileUpload){
-    
+
+myApp.controller('mainCtrl', ['$scope', function($scope) {
+    $scope.newauthor = false;
+    $scope.newcomic = false;
+    $scope.newchapter = false;
+    $scope.newpage = false;
+    $scope.home = true;
+
+    $scope.show = function(type) {
+        switch (type) {
+            case 'home':
+                $scope.home = true;
+                $scope.newauthor = false;
+                $scope.newcomic = false;
+                $scope.newchapter = false;
+                $scope.newpage = false;
+                break;
+            case 'author':
+                $scope.home = false;
+                $scope.newauthor = true;
+                $scope.newcomic = false;
+                $scope.newchapter = false;
+                $scope.newpage = false;
+                break;
+            case 'comic':
+                $scope.home = false;
+                $scope.newauthor = false;
+                $scope.newcomic = true;
+                $scope.newchapter = false;
+                $scope.newpage = false;
+                break;
+            case 'chapter':
+                $scope.home = false;
+                $scope.newauthor = false;
+                $scope.newcomic = false;
+                $scope.newchapter = true;
+                $scope.newpage = false;
+                break;
+            case 'page':
+                $scope.home = false;
+                $scope.newauthor = false;
+                $scope.newcomic = false;
+                $scope.newchapter = false;
+                $scope.newpage = true;
+                break;
+        }
+    }
+}]);
+
+
+myApp.controller('comicCtrl', ['$scope', '$http', 'fileUpload', function($scope, $http, fileUpload){
+
+    $scope.authors = [];
     $scope.comics = [];
     $scope.chapters = [];
 
-    $http.get('/api/comic').success(function(response){
+    $http.get('/api/author').success(function(response) {
+        $scope.authors = response.objects;
+    });
+
+    $http.get('/api/comic').success(function(response) {
         $scope.comics = response.objects;
         //$scope.comic_id = response.objects[0].id;
     });
@@ -61,6 +116,31 @@ myApp.controller('uploadCtrl', ['$scope', '$http', 'fileUpload', function($scope
         } else {
             $scope.chapters = [];
         }
+    }
+
+    $scope.addComic = function() {
+        var title = $scope.comic_title;
+        var author_id = $scope.author_id;
+
+        $http.post('/api/comic', { 'title' : title, 'author_id' : author_id }).success(function(data){
+            $scope.msg = data;
+        });
+    }
+
+    $scope.addChapter = function() {
+        var title = $scope.chapter_title;
+        var comic_id = $scope.comic_id;
+
+        $http.post('/api/chapter', { 'title' : title, 'comic_id' : comic_id }).success(function(data){
+            $scope.msg = data;
+        });
+    }
+
+    $scope.addAuthor = function() {
+        $http.post('/api/author', { 'name' : $scope.author_name }).success(function(data){
+            $scope.msg = data;
+            $scope.author_id = data.id;
+        });
     }
 
     $scope.uploadFile = function(){
